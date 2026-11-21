@@ -1,0 +1,63 @@
+{
+	"operationId": "updateDnsAuthorization",
+	"summary": "Rename an authorization or replace its credentials",
+	"tags": [
+		"certificates"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"certificates.manage"
+			]
+		}
+	],
+	"parameters": [
+		{
+			"name": "id",
+			"in": "path",
+			"required": true,
+			"schema": {
+				"type": "integer",
+				"minimum": 1
+			}
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 100
+						},
+						"credentials": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 16000
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"200": {
+			"description": "Success",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../../components/dns-authorization.json"
+					}
+				}
+			}
+		}
+	}
+}

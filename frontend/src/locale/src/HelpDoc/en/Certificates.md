@@ -26,6 +26,8 @@ certificate. Nor do you need to have your _Proxy Host_ configured for HTTP acces
 
 This process _does_ support wildcard domains.
 
+To reuse an API token, save it under **SSL Certificates → DNS Authorizations** and select that authorization when requesting a DNS certificate. Updating the credentials there also updates what linked certificates use on their next renewal.
+
 ### Custom Certificate
 
 Use this option to upload your own SSL Certificate, as provided by your own

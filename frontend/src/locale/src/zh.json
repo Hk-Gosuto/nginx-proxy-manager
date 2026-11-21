@@ -1,4 +1,61 @@
 {
+	"2fa.backup-codes-remaining": {
+		"defaultMessage": "剩余备用代码：{count}"
+	},
+	"2fa.backup-warning": {
+		"defaultMessage": "请将备用代码保存在安全的地方。每个代码仅可使用一次。"
+	},
+	"2fa.disable": {
+		"defaultMessage": "停用双重身份验证"
+	},
+	"2fa.disable-confirm": {
+		"defaultMessage": "停用双重验证"
+	},
+	"2fa.disable-warning": {
+		"defaultMessage": "停用双重身份验证会降低账户安全性。"
+	},
+	"2fa.disabled": {
+		"defaultMessage": "已停用"
+	},
+	"2fa.done": {
+		"defaultMessage": "我已保存备用代码"
+	},
+	"2fa.enable": {
+		"defaultMessage": "启用双重身份验证"
+	},
+	"2fa.enabled": {
+		"defaultMessage": "已启用"
+	},
+	"2fa.enter-code": {
+		"defaultMessage": "输入验证码"
+	},
+	"2fa.enter-code-disable": {
+		"defaultMessage": "输入验证码以停用双重身份验证"
+	},
+	"2fa.regenerate": {
+		"defaultMessage": "重新生成"
+	},
+	"2fa.regenerate-backup": {
+		"defaultMessage": "重新生成备用代码"
+	},
+	"2fa.regenerate-instructions": {
+		"defaultMessage": "输入验证码以生成新的备用代码。旧代码将失效。"
+	},
+	"2fa.secret-key": {
+		"defaultMessage": "密钥"
+	},
+	"2fa.setup-instructions": {
+		"defaultMessage": "使用身份验证应用扫描此二维码，或手动输入密钥。"
+	},
+	"2fa.status": {
+		"defaultMessage": "状态"
+	},
+	"2fa.title": {
+		"defaultMessage": "双重身份验证"
+	},
+	"2fa.verify-enable": {
+		"defaultMessage": "验证并启用"
+	},
 	"access-list": {
 		"defaultMessage": "通信规则"
 	},
@@ -14,6 +71,12 @@
 	"access-list.help.rules-order": {
 		"defaultMessage": " 允许 (allow) 和禁止 (deny) 规则将按照它们定义的顺序执行。"
 	},
+	"access-list.inherit": {
+		"defaultMessage": "继承代理主机的访问列表"
+	},
+	"access-list.inherit.subtitle": {
+		"defaultMessage": "使用代理主机的访问列表"
+	},
 	"access-list.pass-auth": {
 		"defaultMessage": "将认证传递给上游"
 	},
@@ -22,6 +85,9 @@
 	},
 	"access-list.public.subtitle": {
 		"defaultMessage": "无需基本认证"
+	},
+	"access-list.rule-source.placeholder": {
+		"defaultMessage": "192.168.1.100、192.168.1.0/24 或 2001:0db8::/32"
 	},
 	"access-list.satisfy-any": {
 		"defaultMessage": "满足任意条件"
@@ -38,11 +104,20 @@
 	"action.add-location": {
 		"defaultMessage": "添加路径规则(Location)"
 	},
+	"action.allow": {
+		"defaultMessage": "允许"
+	},
+	"action.clear": {
+		"defaultMessage": "清空"
+	},
 	"action.close": {
 		"defaultMessage": "关闭"
 	},
 	"action.delete": {
 		"defaultMessage": "删除"
+	},
+	"action.deny": {
+		"defaultMessage": "拒绝"
 	},
 	"action.disable": {
 		"defaultMessage": "禁用"
@@ -56,6 +131,9 @@
 	"action.enable": {
 		"defaultMessage": "启用"
 	},
+	"action.logs": {
+		"defaultMessage": "日志"
+	},
 	"action.permissions": {
 		"defaultMessage": "权限"
 	},
@@ -67,6 +145,9 @@
 	},
 	"auditlogs": {
 		"defaultMessage": "审计日志"
+	},
+	"auto": {
+		"defaultMessage": "自动"
 	},
 	"cancel": {
 		"defaultMessage": "取消"
@@ -127,6 +208,9 @@
 	},
 	"certificates.dns.provider": {
 		"defaultMessage": "DNS 提供商"
+	},
+	"certificates.dns.provider.placeholder": {
+		"defaultMessage": "选择 DNS 服务商…"
 	},
 	"certificates.dns.warning": {
 		"defaultMessage": "本节需要您具备一些关于 Certbot 及其 DNS 插件的知识，请参阅相应插件的官方文档。"
@@ -194,6 +278,9 @@
 	"column.email": {
 		"defaultMessage": "邮箱"
 	},
+	"column.error": {
+		"defaultMessage": "错误"
+	},
 	"column.event": {
 		"defaultMessage": "事件"
 	},
@@ -259,6 +346,54 @@
 	},
 	"disabled": {
 		"defaultMessage": "已禁用"
+	},
+	"dns-authorizations": {
+		"defaultMessage": "DNS 服务商授权"
+	},
+	"dns-authorizations.add": {
+		"defaultMessage": "添加 DNS 授权"
+	},
+	"dns-authorizations.delete": {
+		"defaultMessage": "删除 DNS 授权"
+	},
+	"dns-authorizations.delete-confirm": {
+		"defaultMessage": "确定删除 DNS 授权 {name}？"
+	},
+	"dns-authorizations.edit": {
+		"defaultMessage": "编辑 DNS 授权"
+	},
+	"dns-authorizations.empty": {
+		"defaultMessage": "暂无 DNS 授权。"
+	},
+	"dns-authorizations.error.conflict": {
+		"defaultMessage": "请选择已保存的授权，或为本次申请输入 DNS 凭据。"
+	},
+	"dns-authorizations.error.in-use": {
+		"defaultMessage": "至少有一张证书正在使用此授权，无法删除。"
+	},
+	"dns-authorizations.error.invalid": {
+		"defaultMessage": "请输入名称，选择受支持的服务商并填写有效凭据。"
+	},
+	"dns-authorizations.error.load": {
+		"defaultMessage": "无法加载 DNS 授权。"
+	},
+	"dns-authorizations.error.load-providers": {
+		"defaultMessage": "无法加载 DNS 服务商模板。"
+	},
+	"dns-authorizations.error.not-found": {
+		"defaultMessage": "当前账户无法使用此 DNS 授权。"
+	},
+	"dns-authorizations.manual": {
+		"defaultMessage": "为此证书填写凭据"
+	},
+	"dns-authorizations.rotate": {
+		"defaultMessage": "留空可保留当前凭据。关联证书将在下次续期时使用更新后的凭据。"
+	},
+	"dns-authorizations.select": {
+		"defaultMessage": "DNS 授权"
+	},
+	"dns-authorizations.template": {
+		"defaultMessage": "查看凭据模板"
 	},
 	"domain-names": {
 		"defaultMessage": "域名"
@@ -350,6 +485,9 @@
 	"footer.github-fork": {
 		"defaultMessage": "在 Github 上复刻 (Fork) 本项目"
 	},
+	"form.unsaved-changes": {
+		"defaultMessage": "有尚未保存的更改。确定要放弃吗？"
+	},
 	"host.flags.block-exploits": {
 		"defaultMessage": "阻止常见攻击"
 	},
@@ -389,8 +527,74 @@
 	"loading": {
 		"defaultMessage": "加载中···"
 	},
+	"location.advanced-config": {
+		"defaultMessage": "包含自定义 Nginx 配置"
+	},
+	"location.filter": {
+		"defaultMessage": "按路径或目标筛选"
+	},
+	"login.2fa-code": {
+		"defaultMessage": "验证码"
+	},
+	"login.2fa-code-placeholder": {
+		"defaultMessage": "输入验证码"
+	},
+	"login.2fa-description": {
+		"defaultMessage": "输入身份验证应用显示的验证码"
+	},
+	"login.2fa-title": {
+		"defaultMessage": "双重身份验证"
+	},
+	"login.2fa-verify": {
+		"defaultMessage": "验证"
+	},
 	"login.title": {
 		"defaultMessage": "登录您的账户"
+	},
+	"logs": {
+		"defaultMessage": "日志"
+	},
+	"logs.channel.access": {
+		"defaultMessage": "访问日志"
+	},
+	"logs.channel.error": {
+		"defaultMessage": "错误日志"
+	},
+	"logs.download": {
+		"defaultMessage": "下载"
+	},
+	"logs.empty": {
+		"defaultMessage": "暂无日志条目。"
+	},
+	"logs.level": {
+		"defaultMessage": "级别"
+	},
+	"logs.level.all": {
+		"defaultMessage": "所有级别"
+	},
+	"logs.lines": {
+		"defaultMessage": "行数"
+	},
+	"logs.live": {
+		"defaultMessage": "实时"
+	},
+	"logs.paused": {
+		"defaultMessage": "已暂停"
+	},
+	"logs.refresh": {
+		"defaultMessage": "刷新"
+	},
+	"logs.search-placeholder": {
+		"defaultMessage": "搜索日志…"
+	},
+	"logs.source": {
+		"defaultMessage": "来源"
+	},
+	"logs.source.system": {
+		"defaultMessage": "系统"
+	},
+	"logs.truncated-warning": {
+		"defaultMessage": "当前仅显示日志文件最近的部分。"
 	},
 	"nginx-config.label": {
 		"defaultMessage": "自定义 Nginx 配置"
@@ -488,11 +692,20 @@
 	"password.show": {
 		"defaultMessage": "显示密码"
 	},
+	"permissions.allowed-proxy-hosts": {
+		"defaultMessage": "允许访问的代理主机"
+	},
+	"permissions.allowed-proxy-hosts-help": {
+		"defaultMessage": "除了自己创建的代理主机，还可访问其他用户创建的指定代理主机。"
+	},
 	"permissions.hidden": {
 		"defaultMessage": "隐藏"
 	},
 	"permissions.manage": {
 		"defaultMessage": "管理"
+	},
+	"permissions.no-proxy-hosts": {
+		"defaultMessage": "未找到代理主机"
 	},
 	"permissions.view": {
 		"defaultMessage": "仅查看"
@@ -535,6 +748,24 @@
 	},
 	"redirection-hosts.count": {
 		"defaultMessage": "{count} 个重定向主机"
+	},
+	"redirection-hosts.http-code.300": {
+		"defaultMessage": "300 多种选择"
+	},
+	"redirection-hosts.http-code.301": {
+		"defaultMessage": "301 永久重定向"
+	},
+	"redirection-hosts.http-code.302": {
+		"defaultMessage": "302 临时重定向"
+	},
+	"redirection-hosts.http-code.303": {
+		"defaultMessage": "303 查看其他位置"
+	},
+	"redirection-hosts.http-code.307": {
+		"defaultMessage": "307 临时重定向"
+	},
+	"redirection-hosts.http-code.308": {
+		"defaultMessage": "308 永久重定向"
 	},
 	"role.admin": {
 		"defaultMessage": "管理员"
@@ -593,6 +824,9 @@
 	"stream.forward-host": {
 		"defaultMessage": "转发主机"
 	},
+	"stream.forward-host.placeholder": {
+		"defaultMessage": "example.com、10.0.0.1 或 2001:db8:3333:4444:5555:6666:7777:8888"
+	},
 	"stream.incoming-port": {
 		"defaultMessage": "入站端口"
 	},
@@ -610,6 +844,9 @@
 	},
 	"test": {
 		"defaultMessage": "测试"
+	},
+	"update-available": {
+		"defaultMessage": "发现新版本 {latestVersion}"
 	},
 	"user": {
 		"defaultMessage": "用户"
@@ -652,6 +889,9 @@
 	},
 	"user.switch-light": {
 		"defaultMessage": "切换到浅色模式"
+	},
+	"user.two-factor": {
+		"defaultMessage": "双重身份验证"
 	},
 	"username": {
 		"defaultMessage": "用户名"

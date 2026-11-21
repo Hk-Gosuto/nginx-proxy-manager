@@ -1,0 +1,59 @@
+{
+	"operationId": "createDnsAuthorization",
+	"summary": "Create a DNS authorization",
+	"tags": [
+		"certificates"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"certificates.manage"
+			]
+		}
+	],
+	"requestBody": {
+		"required": true,
+		"content": {
+			"application/json": {
+				"schema": {
+					"type": "object",
+					"additionalProperties": false,
+					"required": [
+						"name",
+						"dns_provider",
+						"credentials"
+					],
+					"properties": {
+						"name": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 100
+						},
+						"dns_provider": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 100
+						},
+						"credentials": {
+							"type": "string",
+							"minLength": 1,
+							"maxLength": 16000
+						}
+					}
+				}
+			}
+		}
+	},
+	"responses": {
+		"201": {
+			"description": "Success",
+			"content": {
+				"application/json": {
+					"schema": {
+						"$ref": "../../../components/dns-authorization.json"
+					}
+				}
+			}
+		}
+	}
+}

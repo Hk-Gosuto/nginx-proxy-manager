@@ -114,6 +114,22 @@
 				"$ref": "./paths/nginx/access-lists/listID/delete.json"
 			}
 		},
+		"/nginx/dns-authorizations": {
+			"get": {
+				"$ref": "./paths/nginx/dns-authorizations/get.json"
+			},
+			"post": {
+				"$ref": "./paths/nginx/dns-authorizations/post.json"
+			}
+		},
+		"/nginx/dns-authorizations/{id}": {
+			"put": {
+				"$ref": "./paths/nginx/dns-authorizations/id/put.json"
+			},
+			"delete": {
+				"$ref": "./paths/nginx/dns-authorizations/id/delete.json"
+			}
+		},
 		"/nginx/certificates": {
 			"get": {
 				"$ref": "./paths/nginx/certificates/get.json"

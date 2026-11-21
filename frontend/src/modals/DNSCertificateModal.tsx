@@ -1,13 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import EasyModal, { type InnerModalProps } from "ez-modal-react";
-import { Field, Form } from "formik";
+import { Field, Form, useFormikContext } from "formik";
 import { type ReactNode, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import { createCertificate } from "src/api/backend";
 import { Button, DNSProviderFields, DomainNamesField } from "src/components";
-import { FormModal } from "src/components/Form";
-import { T } from "src/locale";
+import { DNSPropagationSecondsField, FormModal } from "src/components/Form";
+import { useDNSAuthorizations } from "src/hooks/useDNSAuthorizations";
+import { intl, T } from "src/locale";
 import { showObjectSuccess } from "src/notifications";
 
 const showDNSCertificateModal = () => {
@@ -87,7 +88,7 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 										</div>
 									)}
 								</Field>
-								<DNSProviderFields />
+								<DNSAuthorizationFields />
 							</div>
 						</div>
 					</Modal.Body>
@@ -111,5 +112,64 @@ const DNSCertificateModal = EasyModal.create(({ visible, remove }: InnerModalPro
 		</FormModal>
 	);
 });
+
+function DNSAuthorizationFields() {
+	const { values, setValues } = useFormikContext<{
+		dnsAuthorizationId?: number;
+		meta: { dnsProvider?: string; dnsProviderCredentials?: string; propagationSeconds?: number };
+	}>();
+	const { data, isError } = useDNSAuthorizations();
+	const selected = data?.find((item) => item.id === values.dnsAuthorizationId);
+
+	return (
+		<>
+			<div className="mb-3">
+				<label htmlFor="certificate-dns-authorization" className="form-label">
+					<T id="dns-authorizations.select" />
+				</label>
+				<select
+					id="certificate-dns-authorization"
+					className="form-select"
+					value={values.dnsAuthorizationId ?? ""}
+					onChange={(event) => {
+						const dnsAuthorizationId = Number(event.target.value) || undefined;
+						setValues({
+							...values,
+							dnsAuthorizationId,
+							meta: {
+								...values.meta,
+								dnsProvider: undefined,
+								dnsProviderCredentials: undefined,
+								propagationSeconds: undefined,
+							},
+						});
+					}}
+				>
+					<option value="">{intl.formatMessage({ id: "dns-authorizations.manual" })}</option>
+					{data?.map((item) => (
+						<option key={item.id} value={item.id}>
+							{item.name} ({item.dnsProvider})
+						</option>
+					))}
+				</select>
+				{isError && (
+					<small className="text-danger">
+						<T id="dns-authorizations.error.load" />
+					</small>
+				)}
+				{values.dnsAuthorizationId && !selected && (
+					<small className="text-danger">
+						<T id="dns-authorizations.error.not-found" />
+					</small>
+				)}
+			</div>
+			{values.dnsAuthorizationId ? (
+				selected?.dnsProvider !== "route53" && <DNSPropagationSecondsField />
+			) : (
+				<DNSProviderFields />
+			)}
+		</>
+	);
+}
 
 export { showDNSCertificateModal };

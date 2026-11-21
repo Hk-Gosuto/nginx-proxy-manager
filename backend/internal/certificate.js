@@ -7,6 +7,7 @@ import moment from "moment";
 import { ProxyAgent } from "proxy-agent";
 import tempWrite from "temp-write";
 import dnsPlugins from "../certbot/dns-plugins.json" with { type: "json" };
+import db from "../db.js";
 import { installPlugin } from "../lib/certbot.js";
 import { useLetsencryptServer, useLetsencryptStaging } from "../lib/config.js";
 import error from "../lib/error.js";
@@ -16,6 +17,7 @@ import certificateModel from "../models/certificate.js";
 import tokenModel from "../models/token.js";
 import userModel from "../models/user.js";
 import internalAuditLog from "./audit-log.js";
+import dnsAuthorization from "./dns-authorization.js";
 import internalHost from "./host.js";
 import internalNginx from "./nginx.js";
 
@@ -23,6 +25,29 @@ const letsencryptConfig = "/etc/letsencrypt.ini";
 const certbotCommand = "certbot";
 const certbotLogsDir = "/data/logs";
 const certbotWorkDir = "/tmp/letsencrypt-lib";
+const runningDnsChallenges = new Set();
+
+const withDnsCredentials = async (certificateId, credentials, run) => {
+	if (runningDnsChallenges.has(certificateId)) {
+		throw new error.ValidationError("A DNS challenge is already running for this certificate");
+	}
+	runningDnsChallenges.add(certificateId);
+	const location = `/etc/letsencrypt/credentials/credentials-${certificateId}`;
+	try {
+		if (credentials !== undefined) {
+			fs.mkdirSync("/etc/letsencrypt/credentials", { recursive: true });
+			fs.writeFileSync(location, credentials, { mode: 0o600 });
+		}
+		return await run(location);
+	} finally {
+		if (credentials !== undefined) {
+			await fs.promises.rm(location, { force: true }).catch(() => {
+				logger.warn(`Could not remove DNS credentials file for Cert #${certificateId}`);
+			});
+		}
+		runningDnsChallenges.delete(certificateId);
+	}
+};
 
 // Certbot output lines that say nothing about why a request failed
 const certbotNoise = [
@@ -165,11 +190,12 @@ const certbotFailureMessage = (stderr, dnsProvider, secrets) => {
  * @returns {Promise}
  */
 const runCertbot = async (args, opts, dnsProvider, credentials) => {
+	const secrets = credentialValues(credentials);
 	try {
-		return await utils.execFile(certbotCommand, args, opts);
+		const result = await utils.execFile(certbotCommand, args, opts);
+		return credentials ? redactCertbotOutput(result, secrets) : result;
 	} catch (err) {
 		if (err instanceof error.CommandError) {
-			const secrets = credentialValues(credentials);
 			logger.error(redactCertbotOutput(err.message, secrets));
 			// The raw error is not attached as `previous`: the API error handler returns
 			// `previous` to the client for certificate routes, and it holds unredacted output.
@@ -286,8 +312,30 @@ const internalCertificate = {
 			data.nice_name = data.domain_names.join(", ");
 		}
 
-		// this command really should clean up and delete the cert if it can't fully succeed
-		const certificate = await certificateModel.query().insertAndFetch(data);
+		let credentials = data.meta?.dns_provider_credentials;
+		let certificate;
+		if (data.dns_authorization_id !== undefined) {
+			if (
+				data.provider !== "letsencrypt" ||
+				!data.meta?.dns_challenge ||
+				data.meta.dns_provider !== undefined ||
+				credentials !== undefined
+			) {
+				throw new error.ValidationError("dns-authorizations.error.conflict");
+			}
+			certificate = await db().transaction(async (trx) => {
+				const authorization = await dnsAuthorization.getForCertificate(
+					data.dns_authorization_id,
+					data.owner_user_id,
+					trx,
+				);
+				credentials = authorization.credentials;
+				data.meta.dns_provider = authorization.dns_provider;
+				return certificateModel.query(trx).insertAndFetch(data);
+			});
+		} else {
+			certificate = await certificateModel.query().insertAndFetch(data);
+		}
 
 		try {
 			if (certificate.provider === "letsencrypt") {
@@ -318,7 +366,11 @@ const internalCertificate = {
 					try {
 						await internalNginx.reload();
 						// 4. Request cert
-						await internalCertificate.requestLetsEncryptSslWithDnsChallenge(certificate, user.email);
+						await internalCertificate.requestLetsEncryptSslWithDnsChallenge(
+							certificate,
+							user.email,
+							credentials,
+						);
 						await internalNginx.reload();
 						// 6. Re-instate previously disabled hosts
 						await internalCertificate.enableInUseHosts(inUseResult);
@@ -590,6 +642,7 @@ const internalCertificate = {
 
 		await certificateModel.query().where("id", row.id).patch({
 			is_deleted: 1,
+			dns_authorization_id: null,
 		});
 
 		// Add to audit log
@@ -1093,19 +1146,12 @@ const internalCertificate = {
 	 * @param   {String}   email        the email address to use for registration
 	 * @returns {Promise}
 	 */
-	requestLetsEncryptSslWithDnsChallenge: async (certificate, email) => {
+	requestLetsEncryptSslWithDnsChallenge: async (certificate, email, credentials) => {
 		await installPlugin(certificate.meta.dns_provider);
 		const dnsPlugin = dnsPlugins[certificate.meta.dns_provider];
 		logger.info(
 			`Requesting LetsEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
-
-		const credentialsLocation = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
-		fs.mkdirSync("/etc/letsencrypt/credentials", { recursive: true });
-		fs.writeFileSync(credentialsLocation, certificate.meta.dns_provider_credentials, { mode: 0o600 });
-
-		// Whether the plugin has a --<name>-credentials argument
-		const hasConfigArg = certificate.meta.dns_provider !== "route53";
 
 		const args = [
 			"certonly",
@@ -1129,9 +1175,6 @@ const internalCertificate = {
 			dnsPlugin.full_plugin_name,
 		];
 
-		if (hasConfigArg) {
-			args.push(`--${dnsPlugin.full_plugin_name}-credentials`, credentialsLocation);
-		}
 		// The route53 plugin waits for the change through the AWS API and has no propagation option
 		if (certificate.meta.propagation_seconds !== undefined && certificate.meta.dns_provider !== "route53") {
 			args.push(
@@ -1148,32 +1191,20 @@ const internalCertificate = {
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);
 
-		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
+		if (credentials === undefined) {
+			throw new error.ValidationError("DNS credentials are required");
+		}
 
-		try {
-			const result = await runCertbot(
-				args,
-				adds.opts,
-				certificate.meta.dns_provider,
-				certificate.meta.dns_provider_credentials,
-			);
+		return await withDnsCredentials(certificate.id, credentials, async (location) => {
+			// Route 53 reads credentials from AWS_CONFIG_FILE.
+			if (certificate.meta.dns_provider !== "route53") {
+				args.push(`--${dnsPlugin.full_plugin_name}-credentials`, location);
+			}
+			logger.info(`Command: ${certbotCommand} ${args.join(" ")}`);
+			const result = await runCertbot(args, adds.opts, certificate.meta.dns_provider, credentials);
 			logger.info(result);
 			return result;
-		} finally {
-			// Remove the credentials file whether certbot succeeded or failed.
-			//
-			// This cleanup used to sit in a catch block, so it only ran when issuance FAILED.
-			// A certificate that issued successfully left its DNS provider API credentials in
-			// /etc/letsencrypt/credentials for the entire life of that certificate. Nothing
-			// reads the file between certbot runs, so there is no reason to keep it:
-			// renewLetsEncryptSslWithDnsChallenge() writes it again immediately before each
-			// renewal.
-			//
-			// unlink is fire-and-forget with an empty callback. If the file is already gone
-			// that is the end state we wanted anyway, and a missing file must never turn a
-			// successful issuance into a failure.
-			fs.unlink(credentialsLocation, () => {});
-		}
+		});
 	},
 
 	/**
@@ -1197,9 +1228,12 @@ const internalCertificate = {
 				`${internalCertificate.getLiveCertPath(certificate.id)}/fullchain.pem`,
 			);
 
-			const updatedCertificate = await certificateModel.query().patchAndFetchById(certificate.id, {
-				expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
-			});
+			const updatedCertificate = await certificateModel
+				.query()
+				.patchAndFetchById(certificate.id, {
+					expires_on: moment(certInfo.dates.to, "X").format("YYYY-MM-DD HH:mm:ss"),
+				})
+				.then(utils.omitRow(omissions()));
 
 			// Add to audit log
 			await internalAuditLog.add(access, {
@@ -1292,40 +1326,15 @@ const internalCertificate = {
 			`Renewing LetsEncrypt certificates via ${dnsPlugin.name} for Cert #${certificate.id}: ${certificate.domain_names.join(", ")}`,
 		);
 
-		// certbot reads the DNS credentials back from the path recorded in the renewal config
-		// it wrote at issuance time, for example:
-		//
-		//     authenticator = dns-cloudflare
-		//     dns_cloudflare_credentials = /etc/letsencrypt/credentials/credentials-27
-		//
-		// so the file has to be present for the duration of this run. Write it here and remove
-		// it again below rather than leaving it on disk between renewals.
-		//
-		// Leaving it is an avoidable exposure. Anything running as root - a compromised
-		// process, a script, malware - can read the token and use it to issue valid Let's
-		// Encrypt certificates for the domain. Those certificates are genuinely trusted, so
-		// traffic presented with them passes TLS inspection, IDS/IPS and DLP that would
-		// otherwise flag it, and an exfiltration path built on them looks like ordinary
-		// HTTPS. The exposure window should be one certbot run, not the life of the
-		// certificate.
-		//
-		// The value is not on the certificate object we were handed: renew() sources that from
-		// internalCertificate.get(), which pipes the row through utils.omitRow(omissions()) so
-		// meta.dns_provider_credentials can never travel out over the API. Read the row from
-		// the model directly to get at it.
-		const row = await certificateModel.query().where("id", certificate.id).first();
-		const credentials = row?.meta?.dns_provider_credentials;
-		const credentialsLocation = `/etc/letsencrypt/credentials/credentials-${certificate.id}`;
+		const credentials = certificate.dns_authorization_id
+			? (await dnsAuthorization.getForCertificate(certificate.dns_authorization_id, certificate.owner_user_id))
+					.credentials
+			: (await certificateModel.query().findById(certificate.id))?.meta?.dns_provider_credentials;
 
-		if (credentials) {
-			fs.mkdirSync("/etc/letsencrypt/credentials", { recursive: true });
-			fs.writeFileSync(credentialsLocation, credentials, { mode: 0o600 });
-		} else {
-			// Nothing stored to write. A certificate issued under the previous behaviour may
-			// still have its file on disk; leave it be and let certbot decide. Throwing here
-			// would break a renewal that would otherwise have succeeded.
+		if (!credentials) {
+			// Legacy certificates may only have a credentials file. Leave it in place for Certbot.
 			logger.warn(
-				`No stored DNS credentials for Cert #${certificate.id}; relying on any existing ${credentialsLocation}`,
+				`No stored DNS credentials for Cert #${certificate.id}; relying on any existing credentials file`,
 			);
 		}
 
@@ -1354,21 +1363,13 @@ const internalCertificate = {
 		const adds = internalCertificate.getAdditionalCertbotArgs(certificate.id, certificate.meta.dns_provider);
 		args.push(...adds.args);
 
-		logger.info(`Command: ${certbotCommand} ${args ? args.join(" ") : ""}`);
+		logger.info(`Command: ${certbotCommand} ${args.join(" ")}`);
 
-		try {
+		return await withDnsCredentials(certificate.id, credentials || undefined, async () => {
 			const result = await runCertbot(args, adds.opts, certificate.meta.dns_provider, credentials);
 			logger.info(result);
 			return result;
-		} finally {
-			// Only clean up a file we put there ourselves. If `credentials` came back empty we
-			// wrote nothing, and an older file left on disk by the previous behaviour is the
-			// only thing keeping that certificate renewable - deleting it would break the next
-			// run for no gain.
-			if (credentials) {
-				fs.unlink(credentialsLocation, () => {});
-			}
-		}
+		});
 	},
 
 	/**
@@ -1606,8 +1607,10 @@ const internalCertificate = {
 		// inheriting the process env
 		const opts = {};
 		if (certificate_id && dns_provider === "route53") {
-			opts.env = process.env;
-			opts.env.AWS_CONFIG_FILE = `/etc/letsencrypt/credentials/credentials-${certificate_id}`;
+			opts.env = {
+				...process.env,
+				AWS_CONFIG_FILE: `/etc/letsencrypt/credentials/credentials-${certificate_id}`,
+			};
 		}
 
 		if (dns_provider === "duckdns") {

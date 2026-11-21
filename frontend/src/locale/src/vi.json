@@ -347,6 +347,54 @@
 	"disabled": {
 		"defaultMessage": "Đã tắt"
 	},
+	"dns-authorizations": {
+		"defaultMessage": "Ủy quyền DNS"
+	},
+	"dns-authorizations.add": {
+		"defaultMessage": "Thêm ủy quyền DNS"
+	},
+	"dns-authorizations.delete": {
+		"defaultMessage": "Xóa ủy quyền DNS"
+	},
+	"dns-authorizations.delete-confirm": {
+		"defaultMessage": "Xóa ủy quyền DNS {name}?"
+	},
+	"dns-authorizations.edit": {
+		"defaultMessage": "Chỉnh sửa ủy quyền DNS"
+	},
+	"dns-authorizations.empty": {
+		"defaultMessage": "Chưa có ủy quyền DNS."
+	},
+	"dns-authorizations.error.conflict": {
+		"defaultMessage": "Chọn ủy quyền đã lưu hoặc nhập thông tin xác thực DNS cho yêu cầu này."
+	},
+	"dns-authorizations.error.in-use": {
+		"defaultMessage": "Không thể xóa ủy quyền đang được ít nhất một chứng chỉ sử dụng."
+	},
+	"dns-authorizations.error.invalid": {
+		"defaultMessage": "Nhập tên, chọn nhà cung cấp được hỗ trợ và nhập thông tin xác thực hợp lệ."
+	},
+	"dns-authorizations.error.load": {
+		"defaultMessage": "Không thể tải danh sách ủy quyền DNS."
+	},
+	"dns-authorizations.error.load-providers": {
+		"defaultMessage": "Không thể tải mẫu của nhà cung cấp DNS."
+	},
+	"dns-authorizations.error.not-found": {
+		"defaultMessage": "Tài khoản của bạn không thể sử dụng ủy quyền DNS này."
+	},
+	"dns-authorizations.manual": {
+		"defaultMessage": "Nhập thông tin xác thực cho chứng chỉ này"
+	},
+	"dns-authorizations.rotate": {
+		"defaultMessage": "Để trống để giữ thông tin xác thực hiện tại. Chứng chỉ đã liên kết sẽ dùng thông tin mới trong lần gia hạn tiếp theo."
+	},
+	"dns-authorizations.select": {
+		"defaultMessage": "Ủy quyền DNS"
+	},
+	"dns-authorizations.template": {
+		"defaultMessage": "Hiển thị mẫu thông tin xác thực"
+	},
 	"domain-names": {
 		"defaultMessage": "Tên miền"
 	},

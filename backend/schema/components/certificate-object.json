@@ -44,6 +44,10 @@
 		"owner": {
 			"$ref": "./user-object.json"
 		},
+		"dns_authorization_id": {
+			"oneOf": [{ "type": "integer", "minimum": 1 }, { "type": "null" }],
+			"description": "Saved DNS authorization used for issuance and renewal"
+		},
 		"meta": {
 			"type": "object",
 			"additionalProperties": false,

@@ -347,6 +347,54 @@
 	"disabled": {
 		"defaultMessage": "Väljas"
 	},
+	"dns-authorizations": {
+		"defaultMessage": "DNS-i volitused"
+	},
+	"dns-authorizations.add": {
+		"defaultMessage": "Lisa DNS-i volitus"
+	},
+	"dns-authorizations.delete": {
+		"defaultMessage": "Kustuta DNS-i volitus"
+	},
+	"dns-authorizations.delete-confirm": {
+		"defaultMessage": "Kas kustutada DNS-i volitus {name}?"
+	},
+	"dns-authorizations.edit": {
+		"defaultMessage": "Muuda DNS-i volitust"
+	},
+	"dns-authorizations.empty": {
+		"defaultMessage": "DNS-i volitusi pole veel."
+	},
+	"dns-authorizations.error.conflict": {
+		"defaultMessage": "Vali salvestatud volitus või sisesta selle taotluse DNS-i tunnused."
+	},
+	"dns-authorizations.error.in-use": {
+		"defaultMessage": "Seda volitust kasutab vähemalt üks sertifikaat ja seda ei saa kustutada."
+	},
+	"dns-authorizations.error.invalid": {
+		"defaultMessage": "Sisesta nimi ja kehtivad tunnused ning vali toetatud teenusepakkuja."
+	},
+	"dns-authorizations.error.load": {
+		"defaultMessage": "DNS-i volituste laadimine ebaõnnestus."
+	},
+	"dns-authorizations.error.load-providers": {
+		"defaultMessage": "DNS-i teenusepakkujate mallide laadimine ebaõnnestus."
+	},
+	"dns-authorizations.error.not-found": {
+		"defaultMessage": "See DNS-i volitus pole sinu kontole saadaval."
+	},
+	"dns-authorizations.manual": {
+		"defaultMessage": "Sisesta selle sertifikaadi tunnused"
+	},
+	"dns-authorizations.rotate": {
+		"defaultMessage": "Praeguste tunnuste säilitamiseks jäta väli tühjaks. Seotud sertifikaadid kasutavad järgmisel uuendamisel uusi tunnuseid."
+	},
+	"dns-authorizations.select": {
+		"defaultMessage": "DNS-i volitus"
+	},
+	"dns-authorizations.template": {
+		"defaultMessage": "Kuva tunnuste mall"
+	},
 	"domain-names": {
 		"defaultMessage": "Domeeninimed"
 	},

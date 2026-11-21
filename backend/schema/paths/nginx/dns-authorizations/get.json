@@ -1,0 +1,29 @@
+{
+	"operationId": "listDnsAuthorizations",
+	"summary": "List the current user's DNS authorizations",
+	"tags": [
+		"certificates"
+	],
+	"security": [
+		{
+			"bearerAuth": [
+				"certificates.manage"
+			]
+		}
+	],
+	"responses": {
+		"200": {
+			"description": "Success",
+			"content": {
+				"application/json": {
+					"schema": {
+						"type": "array",
+						"items": {
+							"$ref": "../../../components/dns-authorization.json"
+						}
+					}
+				}
+			}
+		}
+	}
+}

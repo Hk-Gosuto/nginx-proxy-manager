@@ -347,6 +347,54 @@
 	"disabled": {
 		"defaultMessage": "Disabled"
 	},
+	"dns-authorizations": {
+		"defaultMessage": "DNS Authorizations"
+	},
+	"dns-authorizations.add": {
+		"defaultMessage": "Add DNS Authorization"
+	},
+	"dns-authorizations.delete": {
+		"defaultMessage": "Delete DNS Authorization"
+	},
+	"dns-authorizations.delete-confirm": {
+		"defaultMessage": "Delete the DNS authorization {name}?"
+	},
+	"dns-authorizations.edit": {
+		"defaultMessage": "Edit DNS Authorization"
+	},
+	"dns-authorizations.empty": {
+		"defaultMessage": "No DNS authorizations yet."
+	},
+	"dns-authorizations.error.conflict": {
+		"defaultMessage": "Select a saved authorization or enter DNS credentials for this request."
+	},
+	"dns-authorizations.error.in-use": {
+		"defaultMessage": "This authorization is used by at least one certificate and cannot be deleted."
+	},
+	"dns-authorizations.error.invalid": {
+		"defaultMessage": "Enter a name, a supported provider and valid credentials."
+	},
+	"dns-authorizations.error.load": {
+		"defaultMessage": "Could not load DNS authorizations."
+	},
+	"dns-authorizations.error.load-providers": {
+		"defaultMessage": "Could not load DNS provider templates."
+	},
+	"dns-authorizations.error.not-found": {
+		"defaultMessage": "This DNS authorization is unavailable for your account."
+	},
+	"dns-authorizations.manual": {
+		"defaultMessage": "Enter credentials for this certificate"
+	},
+	"dns-authorizations.rotate": {
+		"defaultMessage": "Leave blank to keep the current credentials. Linked certificates use the updated credentials on their next renewal."
+	},
+	"dns-authorizations.select": {
+		"defaultMessage": "DNS authorization"
+	},
+	"dns-authorizations.template": {
+		"defaultMessage": "Show credentials template"
+	},
 	"domain-names": {
 		"defaultMessage": "Domain Names"
 	},

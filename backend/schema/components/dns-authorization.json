@@ -1,0 +1,25 @@
+{
+	"type": "object",
+	"additionalProperties": false,
+	"required": [
+		"id",
+		"name",
+		"dns_provider"
+	],
+	"properties": {
+		"id": {
+			"type": "integer",
+			"minimum": 1
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		},
+		"dns_provider": {
+			"type": "string",
+			"minLength": 1,
+			"maxLength": 100
+		}
+	}
+}

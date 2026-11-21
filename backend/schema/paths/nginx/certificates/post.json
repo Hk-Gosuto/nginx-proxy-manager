@@ -26,6 +26,11 @@
 						"domain_names": {
 							"$ref": "../../../components/certificate-object.json#/properties/domain_names"
 						},
+						"dns_authorization_id": {
+							"type": "integer",
+							"minimum": 1,
+							"description": "Use a saved authorization with the Let's Encrypt DNS challenge. Omit inline DNS provider and credentials."
+						},
 						"meta": {
 							"$ref": "../../../components/certificate-object.json#/properties/meta"
 						}

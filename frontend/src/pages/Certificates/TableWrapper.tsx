@@ -1,6 +1,7 @@
 import { IconHelp, IconSearch } from "@tabler/icons-react";
 import { useState } from "react";
 import Alert from "react-bootstrap/Alert";
+import { Link } from "react-router-dom";
 import { deleteCertificate, downloadCertificate } from "src/api/backend";
 import { Button, HasPermission, LoadingPage } from "src/components";
 import { useCertificates } from "src/hooks";
@@ -91,6 +92,9 @@ export default function TableWrapper() {
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
+									<Link to="/certificates/dns-authorizations" className="btn btn-sm">
+										<T id="dns-authorizations" />
+									</Link>
 									{data?.length ? (
 										<div className="dropdown">
 											<button

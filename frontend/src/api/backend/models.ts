@@ -111,6 +111,7 @@ export type AccessListClient = {
 };
 
 export interface Certificate {
+	dnsAuthorizationId?: number | null;
 	id: number;
 	createdOn: string;
 	modifiedOn: string;
