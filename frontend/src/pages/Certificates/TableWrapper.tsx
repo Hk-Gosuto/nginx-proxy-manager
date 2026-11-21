@@ -66,14 +66,14 @@ export default function TableWrapper() {
 			<div className="card-status-top bg-pink" />
 			<div className="card-table">
 				<div className="card-header">
-					<div className="row w-full">
+					<div className="row w-full align-items-center gy-2">
 						<div className="col">
-							<h2 className="mt-1 mb-0">
+							<h2 className="mb-0">
 								<T id="certificates" />
 							</h2>
 						</div>
 						<div className="col-md-auto col-sm-12">
-							<div className="ms-auto d-flex flex-wrap btn-list">
+							<div className="ms-auto btn-list align-items-center">
 								{data?.length ? (
 									<div className="input-group input-group-flat w-auto">
 										<span className="input-group-text input-group-text-sm">
@@ -92,53 +92,55 @@ export default function TableWrapper() {
 									<IconHelp size={20} />
 								</Button>
 								<HasPermission section={CERTIFICATES} permission={MANAGE} hideError>
-									<Link to="/certificates/dns-authorizations" className="btn btn-sm">
-										<T id="dns-authorizations" />
-									</Link>
-									{data?.length ? (
-										<div className="dropdown">
-											<button
-												type="button"
-												className="btn btn-sm dropdown-toggle btn-pink mt-1"
-												data-bs-toggle="dropdown"
-											>
-												<T id="object.add" tData={{ object: "certificate" }} />
-											</button>
-											<div className="dropdown-menu">
-												<a
-													className="dropdown-item"
-													href="#"
-													onClick={(e) => {
-														e.preventDefault();
-														showHTTPCertificateModal();
-													}}
+									<div className="btn-list align-items-center">
+										<Link to="/certificates/dns-authorizations" className="btn btn-sm">
+											<T id="dns-authorizations" />
+										</Link>
+										{data?.length ? (
+											<div className="dropdown">
+												<button
+													type="button"
+													className="btn btn-sm dropdown-toggle btn-pink"
+													data-bs-toggle="dropdown"
 												>
-													<T id="lets-encrypt-via-http" />
-												</a>
-												<a
-													className="dropdown-item"
-													href="#"
-													onClick={(e) => {
-														e.preventDefault();
-														showDNSCertificateModal();
-													}}
-												>
-													<T id="lets-encrypt-via-dns" />
-												</a>
-												<div className="dropdown-divider" />
-												<a
-													className="dropdown-item"
-													href="#"
-													onClick={(e) => {
-														e.preventDefault();
-														showCustomCertificateModal();
-													}}
-												>
-													<T id="certificates.custom" />
-												</a>
+													<T id="object.add" tData={{ object: "certificate" }} />
+												</button>
+												<div className="dropdown-menu">
+													<a
+														className="dropdown-item"
+														href="#"
+														onClick={(e) => {
+															e.preventDefault();
+															showHTTPCertificateModal();
+														}}
+													>
+														<T id="lets-encrypt-via-http" />
+													</a>
+													<a
+														className="dropdown-item"
+														href="#"
+														onClick={(e) => {
+															e.preventDefault();
+															showDNSCertificateModal();
+														}}
+													>
+														<T id="lets-encrypt-via-dns" />
+													</a>
+													<div className="dropdown-divider" />
+													<a
+														className="dropdown-item"
+														href="#"
+														onClick={(e) => {
+															e.preventDefault();
+															showCustomCertificateModal();
+														}}
+													>
+														<T id="certificates.custom" />
+													</a>
+												</div>
 											</div>
-										</div>
-									) : null}
+										) : null}
+									</div>
 								</HasPermission>
 							</div>
 						</div>
